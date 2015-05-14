@@ -1,12 +1,13 @@
 package service;
 
+import com.sun.org.apache.xalan.internal.xsltc.runtime.BasisLibrary;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 import java.util.StringTokenizer;
 import model.Carro;
 import model.Conexao;
@@ -19,9 +20,12 @@ import model.Pacote;
  */
 public class Servidor {
     
+    protected final int NUMERO_DE_CARTAS_POR_JOGADOR = 4;
+    protected final int NUMERO_DE_JOGADORES_POR_JOGO = 4;
+    
     protected ServerSocket server;
     protected static final int PORTA = 7878;
-    protected List<Conexao> conexoes;
+    protected static ArrayList<Conexao> conexoes;
         
     public static void main(String [] args){
         try {
@@ -60,10 +64,76 @@ public class Servidor {
             
             this.conexoes.add(conexao);
             
+            //Game Start
+            if(conexoes.size()==4){
+                
+                System.out.println("[SERVIDOR] Start...");
+                
+                //msg aos jogadores
+                Pacote pacote = new Pacote(Escopo.CHAT);
+                String msgStart = "[Servidor] Game Start\n";
+                pacote.addContainer(msgStart);
+                trataPacote(pacote, null);
+                
+                //carrega carros
+                ArrayList<Carro> carros = carregaCartas();
+                
+                Random rand = new Random();
+                
+                //para cada jogador
+                System.out.println("[SERVIDOR] Enviado Cartas...");
+                for (Conexao conex : conexoes) {
+                    
+                    System.out.println("[SERVIDOR] " + conex.getNome());
+                    
+                    Pacote pacoteCartas = new Pacote(Escopo.START);
+                    
+                    for(int i = 0; i < NUMERO_DE_CARTAS_POR_JOGADOR ; i++){
+                        
+                        //pega um carro aleatorio / add pacote / remove do array
+                        int randNum = rand.nextInt(carros.size());
+                        Carro carro = carros.get(randNum);
+                        pacoteCartas.addContainer(carro);
+                        carros.remove(carro);
+                        
+                    }
+                    
+                    trataPacote(pacoteCartas, conex);
+                }
+                
+                int first = rand.nextInt(conexoes.size());
+                
+                //qual jogador deve começar
+                for(int i = 0; i < conexoes.size(); i++){
+                    
+                    Pacote pacoteFirst = new Pacote(Escopo.WIN);
+                    Boolean isFirst = null;
+                    
+                    if(first==i){
+                        System.out.println("[Servidor] O Jogador " + conexoes.get(i).getNome() + " deve começar");
+                        isFirst = new Boolean(true);
+                    }else{
+                        isFirst = new Boolean(false);
+                    }
+                    
+                    pacoteFirst.addContainer(isFirst);
+                    
+                    trataPacote(pacoteFirst,conexoes.get(i));
+                }
+                
+                System.out.println("FINISH");
+                //apenas para teste
+                
+                System.exit(0);
+            }
+            
+            Pacote pacote = new Pacote(Escopo.CHAT);
+            pacote.addContainer("[Servidor] Faltam " +(this.NUMERO_DE_JOGADORES_POR_JOGO-conexoes.size()) + " jogadores!\n");
+            trataPacote(pacote,null);
         }
     }
     
-    public synchronized void trataPacote(Pacote pacote){
+    public static synchronized void trataPacote(Pacote pacote, Conexao conex){
         
         Escopo escopo = pacote.getEscopo();
         
@@ -79,6 +149,23 @@ public class Servidor {
                     
                     ex.printStackTrace();
                 }
+            }
+        }else if(escopo == Escopo.START){
+            
+            try {
+                new ObjectOutputStream(conex.getSocket().getOutputStream()).writeObject(pacote);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            
+        }else if(escopo == Escopo.WIN){
+            
+            try {
+            
+                new ObjectOutputStream(conex.getSocket().getOutputStream()).writeObject(pacote);
+                
+            } catch (IOException ex) {
+                        ex.printStackTrace();
             }
         }
     }
@@ -108,7 +195,7 @@ public class Servidor {
                         
                     }
                     
-                    trataPacote(pacote);
+                    trataPacote(pacote, this.cliente);
                     
                 } catch (IOException ex) {
                     
@@ -121,7 +208,7 @@ public class Servidor {
                     Pacote pacote = new Pacote(Escopo.CHAT);
                     pacote.addContainer(msgOut);
                     
-                    trataPacote(pacote);
+                    trataPacote(pacote, this.cliente);
                     
                     throw  new RuntimeException("Jogador " + nome + " desconectou.");
                     

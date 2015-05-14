@@ -375,6 +375,15 @@ public class Cliente extends javax.swing.JFrame {
         if(escopo == Escopo.CHAT){
             
             this.tArea.append((String)pacote.getContainer().get(0));
+            
+        }else if(escopo == Escopo.START){
+            
+            System.out.println("START");
+            
+        }else if(escopo == Escopo.WIN){
+            
+            Boolean isFirst = (Boolean) pacote.getContainer().get(0);
+            System.out.println("WIN " + isFirst);
         }
     }
     

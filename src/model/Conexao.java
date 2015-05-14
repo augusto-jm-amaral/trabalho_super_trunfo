@@ -5,6 +5,7 @@
  */
 package model;
 
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.Objects;
 
@@ -12,7 +13,7 @@ import java.util.Objects;
  *
  * @author augusto
  */
-public class Conexao {
+public class Conexao implements Serializable{
     
     private static int conexoes = 0;
     

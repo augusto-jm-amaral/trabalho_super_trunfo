@@ -122,4 +122,27 @@ public class Carro implements Serializable{
     public String toString() {
         return "Carro{" + "idCarta=" + idCarta + ", marca=" + marca + ", modelo=" + modelo + ", velocidadeMaxima=" + velocidadeMaxima + ", peso=" + peso + ", cilindradasMotor=" + cilindradasMotor + ", preco=" + preco + ", torque=" + torque + ", potencia=" + potencia + '}';
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + this.idCarta;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Carro other = (Carro) obj;
+        if (this.idCarta != other.idCarta) {
+            return false;
+        }
+        return true;
+    }
+  
 }
