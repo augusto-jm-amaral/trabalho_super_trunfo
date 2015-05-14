@@ -324,6 +324,11 @@ public class Cliente extends javax.swing.JFrame {
             Thread thread = new Thread(new ServerListener(server));
             thread.start();
             
+            Pacote pacote = new Pacote(Escopo.CHAT);
+            pacote.addContainer("Jogador " + nome + " acaba de se conectar!\n");
+            
+            new ObjectOutputStream(this.server.getSocket().getOutputStream()).writeObject(pacote);
+            
         } catch (IOException ex) {
             ex.printStackTrace();
         }
