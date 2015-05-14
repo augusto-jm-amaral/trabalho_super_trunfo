@@ -52,6 +52,21 @@ public class Cliente extends javax.swing.JFrame {
         tEnviar = new javax.swing.JTextField();
         bEnviar = new javax.swing.JButton();
         bConectar = new javax.swing.JButton();
+        cOpcoes = new javax.swing.JComboBox();
+        bJogar = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        lMarcaModelo = new javax.swing.JLabel();
+        lPreco = new javax.swing.JLabel();
+        lCilindradas = new javax.swing.JLabel();
+        lPotencia = new javax.swing.JLabel();
+        lTorque = new javax.swing.JLabel();
+        lVelocidade = new javax.swing.JLabel();
+        lPeso = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -79,8 +94,10 @@ public class Cliente extends javax.swing.JFrame {
             }
         });
 
+        tArea.setEditable(false);
         tArea.setColumns(20);
         tArea.setRows(5);
+        tArea.setRequestFocusEnabled(false);
         jScrollPane1.setViewportView(tArea);
 
         tEnviar.setEnabled(false);
@@ -100,6 +117,38 @@ public class Cliente extends javax.swing.JFrame {
             }
         });
 
+        cOpcoes.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Velocidade Max", "Peso", "Cilindrada", "Preço", "Torque", "Potencia" }));
+
+        bJogar.setText("Jogar");
+        bJogar.setEnabled(false);
+
+        jLabel6.setText("Vel Max");
+
+        jLabel8.setText("Peso");
+
+        jLabel9.setText("Preco");
+
+        jLabel10.setText("Cilindradas");
+
+        jLabel11.setText("Potencia");
+
+        jLabel12.setText("Torque");
+
+        lMarcaModelo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lMarcaModelo.setText("Marca / Modelo");
+
+        lPreco.setText("Preco");
+
+        lCilindradas.setText("Cilindradas");
+
+        lPotencia.setText("Potencia");
+
+        lTorque.setText("Torque");
+
+        lVelocidade.setText("Vel Max");
+
+        lPeso.setText("Peso");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -117,7 +166,28 @@ public class Cliente extends javax.swing.JFrame {
                             .addComponent(tNome, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(tIp, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(tPorta, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(bConectar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(bConectar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cOpcoes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(bJogar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lMarcaModelo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel12))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lVelocidade)
+                            .addComponent(lPeso)
+                            .addComponent(lPreco)
+                            .addComponent(lCilindradas)
+                            .addComponent(lPotencia)
+                            .addComponent(lTorque))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
@@ -132,7 +202,12 @@ public class Cliente extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(tEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bEnviar)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -146,12 +221,40 @@ public class Cliente extends javax.swing.JFrame {
                             .addComponent(jLabel3)
                             .addComponent(tPorta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(9, 9, 9)
-                        .addComponent(bConectar)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bEnviar))
-                .addContainerGap(24, Short.MAX_VALUE))
+                        .addComponent(bConectar)
+                        .addGap(23, 23, 23)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cOpcoes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bJogar))
+                        .addGap(18, 18, 18)
+                        .addComponent(lMarcaModelo)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(4, 4, 4)
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel11))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lVelocidade)
+                                .addGap(4, 4, 4)
+                                .addComponent(lPeso)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lCilindradas)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lPreco)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lTorque)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lPotencia)))))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
@@ -308,10 +411,25 @@ public class Cliente extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bConectar;
     private javax.swing.JButton bEnviar;
+    private javax.swing.JButton bJogar;
+    private javax.swing.JComboBox cOpcoes;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lCilindradas;
+    private javax.swing.JLabel lMarcaModelo;
+    private javax.swing.JLabel lPeso;
+    private javax.swing.JLabel lPotencia;
+    private javax.swing.JLabel lPreco;
+    private javax.swing.JLabel lTorque;
+    private javax.swing.JLabel lVelocidade;
     private javax.swing.JTextArea tArea;
     private javax.swing.JTextField tEnviar;
     private javax.swing.JTextField tIp;
