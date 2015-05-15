@@ -410,15 +410,16 @@ public class Cliente extends javax.swing.JFrame {
         //pacote de start
         }else if(escopo == Escopo.START){
             
-            this.carros = new ArrayList<>();
+            this.carros = (ArrayList<Carro>) pacote.getContainer().get(0);
             
-            for (Object object : pacote.getContainer()) {
-                
-                carros.add((Carro) object);
+            Boolean isStart = (Boolean) pacote.getContainer().get(1);
+            
+            if(isStart){
+                this.bJogar.setEnabled(true);
             }
             
+            //printa carro na tela
             carroNaTela = carros.get(0);
-            
             renderizarCarroTela();
         
         //pacote de retorno da jogada

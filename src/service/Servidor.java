@@ -80,51 +80,64 @@ public class Servidor {
                 
                 Random rand = new Random();
                 
+                int first = rand.nextInt(conexoes.size());
+                
                 //para cada jogador
                 System.out.println("[SERVIDOR] Enviado Cartas...");
-                for (Conexao conex : conexoes) {
+                for (int i = 0 ; i < conexoes.size(); i++) {
                     
-                    System.out.println("[SERVIDOR] " + conex.getNome());
+                    System.out.println("[SERVIDOR] " + conexoes.get(i).getNome());
                     
-                    Pacote pacoteCartas = new Pacote(Escopo.START);
+                    Pacote pacoteStart = new Pacote(Escopo.START);
                     
-                    for(int i = 0; i < NUMERO_DE_CARTAS_POR_JOGADOR ; i++){
+                    ArrayList<Carro> carrosStart = new ArrayList<>();
+                    
+                    for(int j = 0; j < NUMERO_DE_CARTAS_POR_JOGADOR ; j++){
                         
                         //pega um carro aleatorio / add pacote / remove do array
                         int randNum = rand.nextInt(carros.size());
                         Carro carro = carros.get(randNum);
-                        pacoteCartas.addContainer(carro);
+                        carrosStart.add(carro);
                         carros.remove(carro);
                         
                     }
                     
-                    trataPacote(pacoteCartas, conex);
-                }
-                
-                int first = rand.nextInt(conexoes.size());
-                
-                //qual jogador deve começar
-                for(int i = 0; i < conexoes.size(); i++){
+                    //add arraylist de cartas
+                    pacoteStart.addContainer(carrosStart);
                     
-                    Pacote pacoteFirst = new Pacote(Escopo.JOGADA_RETURN);
                     Boolean isFirst = null;
                     
+                    //verifica qual vai ser o primeiro a jogar
                     if(first==i){
+                    
                         System.out.println("[Servidor] O Jogador " + conexoes.get(i).getNome() + " deve começar");
                         isFirst = new Boolean(true);
+                    
                     }else{
+                    
                         isFirst = new Boolean(false);
+                    
                     }
                     
-                    pacoteFirst.addContainer(isFirst);
+                    //add o boolean de quem começa
+                    pacoteStart.addContainer(isFirst);
                     
-                    trataPacote(pacoteFirst,conexoes.get(i));
+                    trataPacote(pacoteStart, conexoes.get(i));
                 }
                 
-                System.out.println("FINISH");
+                
+                System.out.println("FINISH START");
                 //apenas para teste
                 
-                System.exit(0);
+                //Thread principal aguarda [TEMPORARIO]
+                while(true){
+                    
+                    try{
+                        Thread.sleep(10000);
+                    }catch(InterruptedException ex){
+                        ex.printStackTrace();
+                    }
+                }
             }
             
             Pacote pacote = new Pacote(Escopo.CHAT);
@@ -158,15 +171,13 @@ public class Servidor {
                 ex.printStackTrace();
             }
             
-        }else if(escopo == Escopo.JOGADA_RETURN){
+        }else if(escopo == Escopo.GET_JOGADA){
             
-            try {
+            System.out.println("GET_JOGADA " + (String)pacote.getContainer().get(1));
             
-                new ObjectOutputStream(conex.getSocket().getOutputStream()).writeObject(pacote);
-                
-            } catch (IOException ex) {
-                        ex.printStackTrace();
-            }
+        }else if(escopo == Escopo.JOGADA){
+            
+            System.out.println("JOGADA " + (String)pacote.getContainer().get(2));
         }
     }
     
