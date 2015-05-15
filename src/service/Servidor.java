@@ -106,7 +106,7 @@ public class Servidor {
                 //qual jogador deve começar
                 for(int i = 0; i < conexoes.size(); i++){
                     
-                    Pacote pacoteFirst = new Pacote(Escopo.WIN);
+                    Pacote pacoteFirst = new Pacote(Escopo.JOGADA_RETURN);
                     Boolean isFirst = null;
                     
                     if(first==i){
@@ -158,7 +158,7 @@ public class Servidor {
                 ex.printStackTrace();
             }
             
-        }else if(escopo == Escopo.WIN){
+        }else if(escopo == Escopo.JOGADA_RETURN){
             
             try {
             

@@ -10,5 +10,5 @@ package model;
  * @author augusto
  */
 public enum Escopo {
-    CHAT, START, WIN;
+    CHAT, START, JOGADA_RETURN, JOGADA, GET_JOGADA;
 }

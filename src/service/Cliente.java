@@ -7,11 +7,12 @@ package service;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Carro;
 import model.Conexao;
 import model.Escopo;
 import model.Pacote;
@@ -23,7 +24,8 @@ import model.Pacote;
 public class Cliente extends javax.swing.JFrame {
     
     protected Conexao server;
-    
+    protected ArrayList<Carro> carros;
+    protected Carro carroNaTela;
     
     /**
      * Creates new form Cliente
@@ -121,6 +123,11 @@ public class Cliente extends javax.swing.JFrame {
 
         bJogar.setText("Jogar");
         bJogar.setEnabled(false);
+        bJogar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bJogarActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("Vel Max");
 
@@ -288,6 +295,7 @@ public class Cliente extends javax.swing.JFrame {
         
         try {
             
+            
             new ObjectOutputStream(this.server.getSocket().getOutputStream()).writeObject(pacote);
             
         } catch (IOException ex) {
@@ -336,6 +344,28 @@ public class Cliente extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_bConectarActionPerformed
+
+    private void bJogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bJogarActionPerformed
+        Pacote pacote = new Pacote(Escopo.JOGADA);
+        
+        //Opcao, Carro, Nome
+        pacote.addContainer((String) this.cOpcoes.getSelectedItem());
+        pacote.addContainer(this.carroNaTela);
+        pacote.addContainer(this.tNome.getText());
+        
+        trataPacote(pacote);
+    }//GEN-LAST:event_bJogarActionPerformed
+
+    private void renderizarCarroTela() {
+        
+        this.lMarcaModelo.setText(carroNaTela.getMarca() + " " + carroNaTela.getModelo());
+        this.lVelocidade.setText("" + carroNaTela.getVelocidadeMaxima());
+        this.lPeso.setText("" + carroNaTela.getPeso());
+        this.lCilindradas.setText("" + carroNaTela.getCilindradasMotor());
+        this.lPreco.setText("" + carroNaTela.getPreco());
+        this.lTorque.setText("" + carroNaTela.getTorque());
+        this.lPotencia.setText("" + carroNaTela.getPotencia());
+    }
     
     class ServerListener implements Runnable{
         
@@ -367,23 +397,89 @@ public class Cliente extends javax.swing.JFrame {
         
     }
     
-    
+    //Trata os pacotes
     public synchronized void trataPacote(Pacote pacote){
         
         Escopo escopo = pacote.getEscopo();
         
+        //pacote de chat
         if(escopo == Escopo.CHAT){
             
             this.tArea.append((String)pacote.getContainer().get(0));
             
+        //pacote de start
         }else if(escopo == Escopo.START){
             
-            System.out.println("START");
+            this.carros = new ArrayList<>();
             
-        }else if(escopo == Escopo.WIN){
+            for (Object object : pacote.getContainer()) {
+                
+                carros.add((Carro) object);
+            }
             
-            Boolean isFirst = (Boolean) pacote.getContainer().get(0);
-            System.out.println("WIN " + isFirst);
+            carroNaTela = carros.get(0);
+            
+            renderizarCarroTela();
+        
+        //pacote de retorno da jogada
+        }else if(escopo == Escopo.JOGADA_RETURN){
+            
+            Boolean isWin = (Boolean) pacote.getContainer().get(0);
+            
+            //Ganhou ou Perdeu?
+            if(isWin){
+                this.bJogar.setEnabled(true);
+                
+                ArrayList<Carro> carros = (ArrayList<Carro>) pacote.getContainer().get(1);
+                
+                for (Carro carro : carros) {
+                    this.carros.add(carro);
+                }
+                
+            }else{
+                this.bJogar.setEnabled(false);
+                this.carros.remove(this.carroNaTela);
+                
+                if(carros.size()==0){
+                    //FIM DE JOGO A IMPLEMENTAR ESTE É TEMPORARIO
+                    System.exit(0);
+                }
+                
+                this.carroNaTela = this.carros.get(0);
+                renderizarCarroTela();
+            }
+            
+            if(!pacote.getContainer().isEmpty()){
+                
+                for (Object object : pacote.getContainer()) {
+                    carros.add((Carro) object);
+                }
+            }
+        
+        //pacote de jogada
+        }else if(escopo == Escopo.JOGADA){
+            
+            try {
+                new ObjectOutputStream(server.getSocket().getOutputStream()).writeObject(pacote);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        
+        //pacote que pede uma jogada 
+        //(Para os jogadores que não podem fazer a jogada na rodada, o servidor vai requisitar a carta)
+        }else if(escopo == Escopo.GET_JOGADA){
+            
+            Pacote pacoteJogada = new Pacote(Escopo.GET_JOGADA);
+            pacoteJogada.addContainer(this.carroNaTela);
+            pacoteJogada.addContainer(this.tNome.getText());
+            
+            try {
+                new ObjectOutputStream(server.getSocket().getOutputStream()).writeObject(pacoteJogada);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            
+            
         }
     }
     
