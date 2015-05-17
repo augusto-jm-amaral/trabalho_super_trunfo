@@ -1,6 +1,5 @@
 package service;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.BasisLibrary;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,6 +8,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Carro;
 import model.Conexao;
 import model.Escopo;
@@ -26,7 +27,9 @@ public class Servidor {
     protected ServerSocket server;
     protected static final int PORTA = 7878;
     protected static ArrayList<Conexao> conexoes;
-        
+    protected ArrayList<Jogada> jogadas;
+    protected String opcao;
+    
     public static void main(String [] args){
         try {
             new Servidor();
@@ -57,11 +60,14 @@ public class Servidor {
             
             System.out.println("[SERVIDOR] Cliente on...");
             
+            //gera a conexao
             Conexao conexao = new Conexao(socket);
             
+            //cria um listener para a conexão
             Thread thread = new Thread(new ClientListener(conexao));
             thread.start();
             
+            //add ao array de conexões
             this.conexoes.add(conexao);
             
             //Game Start
@@ -109,7 +115,7 @@ public class Servidor {
                     
                     //verifica qual vai ser o primeiro a jogar
                     if(first==i){
-                    
+                        
                         System.out.println("[Servidor] O Jogador " + conexoes.get(i).getNome() + " deve começar");
                         isFirst = new Boolean(true);
                     
@@ -123,6 +129,8 @@ public class Servidor {
                     pacoteStart.addContainer(isFirst);
                     
                     trataPacote(pacoteStart, conexoes.get(i));
+                    
+                    pause(500);
                 }
                 
                 
@@ -146,7 +154,16 @@ public class Servidor {
         }
     }
     
-    public static synchronized void trataPacote(Pacote pacote, Conexao conex){
+    public synchronized void pause(int tempo){
+        
+        try {
+            Thread.sleep(tempo);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public synchronized void trataPacote(Pacote pacote, Conexao conex){
         
         Escopo escopo = pacote.getEscopo();
         
@@ -173,11 +190,100 @@ public class Servidor {
             
         }else if(escopo == Escopo.GET_JOGADA){
             
-            System.out.println("GET_JOGADA " + (String)pacote.getContainer().get(1));
+            System.out.println("GET_JOGADA " + conex.getNome());
+            
+            //tranforma o pacote em uma jogada
+            Jogada jogada = new Jogada(conex, (Carro) pacote.getContainer().get(0));
+            jogadas.add(jogada);
+            
+            //espera todos jogarem
+            if((jogadas.size()) == (conexoes.size())){
+                
+                //Class responsavel por determinar o ganhador
+                JogadaService jogadaService = new JogadaService();
+                //determina ganahdor
+                Jogada jogadaWinner = jogadaService.getWinner(jogadas, opcao);
+                
+                //envia msg dizendo quem ganhou
+                Pacote pacoteMsgWinner = new Pacote(Escopo.CHAT);
+                pacoteMsgWinner.addContainer("[Servidor] O Jogardor " + jogadaWinner.getConexao().getNome() + " ganhou a rodada!\n");
+                trataPacote(pacoteMsgWinner, null);
+                
+                //Array dos carros da jogada na qual o ganhador deve levar
+                ArrayList<Carro> carrosNaJogada = new ArrayList<>();
+                carrosNaJogada.add(jogadaWinner.getCarro());
+                
+                //remove jogador ganahdor do array de jogadas
+                jogadas.remove(jogadaWinner);
+                
+                //sobra apena so jogadores perdedores
+                for (Jogada jogadaPerdedor : jogadas) {
+                    
+                    //pega carro jogador perdedor
+                    carrosNaJogada.add(jogadaPerdedor.getCarro());
+                    
+                    //boolean dizendo que ele perdeu
+                    Boolean isWinner = new Boolean(false);
+                    Pacote pacoteLoser = new Pacote(Escopo.JOGADA_RETURN);
+                    pacoteLoser.addContainer(isWinner);
+                    
+                    try {
+                        //envia pacote ao jogador perdedor
+                        new ObjectOutputStream(jogadaPerdedor.getConexao().getSocket().getOutputStream()).writeObject(pacoteLoser);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+               
+                //pacote jogador ganhador
+                Pacote pacoteWinner = new Pacote(Escopo.JOGADA_RETURN);
+                pacoteWinner.addContainer(new Boolean(true));
+                pacoteWinner.addContainer(carrosNaJogada);
+                
+                try {
+                    //envia pacote ao jogador ganhador
+                    new ObjectOutputStream(jogadaWinner.getConexao().getSocket().getOutputStream()).writeObject(pacoteWinner);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                
+                
+            }
             
         }else if(escopo == Escopo.JOGADA){
             
-            System.out.println("JOGADA " + (String)pacote.getContainer().get(2));
+            System.out.println("JOGADA " + conex.getNome());
+            
+            //elimina jogadas
+            jogadas = new ArrayList<>();
+            
+            //converte pacote em jogada
+            Jogada jogada = new Jogada(conex,(Carro) pacote.getContainer().get(1));
+            opcao = (String) pacote.getContainer().get(0);
+            
+            //add jogada no array
+            jogadas.add(jogada);
+            
+            //avisa os jogadores qual opção escolhida
+            Pacote pacoteMsgWinner = new Pacote(Escopo.CHAT);
+            pacoteMsgWinner.addContainer("[Servidor] O Jogardor " + jogada.getConexao().getNome() + " escolheu a opção " + opcao + "\n");
+            trataPacote(pacoteMsgWinner, null);
+            
+            
+            //Para todas as conexões
+            for (Conexao conexao : conexoes) {
+                
+                //menos a conexão que jogou
+                if(!conex.equals(conexao)){
+                    try {
+                        
+                        new ObjectOutputStream(conexao.getSocket().getOutputStream()).writeObject(new Pacote(Escopo.GET_JOGADA));
+                        
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
         }
     }
     
@@ -202,7 +308,7 @@ public class Servidor {
                     if(pacote.getEscopo()==Escopo.CHAT && cliente.getNome().equals("")){
                         String msg = (String) pacote.getContainer().get(0);
                         String[] split = msg.split(" ");
-                        cliente.setNome(split[1]);
+                        cliente.setNome(split[2]);
                         
                     }
                     
@@ -215,7 +321,7 @@ public class Servidor {
                     String nome  = cliente.getNome();
                     conexoes.remove(this.cliente);
                     
-                    String msgOut = "O jogador " + nome + " desconectou-se\n";
+                    String msgOut = "[Servidor] O jogador " + nome + " desconectou-se\n";
                     Pacote pacote = new Pacote(Escopo.CHAT);
                     pacote.addContainer(msgOut);
                     

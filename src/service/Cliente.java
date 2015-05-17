@@ -333,7 +333,7 @@ public class Cliente extends javax.swing.JFrame {
             thread.start();
             
             Pacote pacote = new Pacote(Escopo.CHAT);
-            pacote.addContainer("Jogador " + nome + " acaba de se conectar!\n");
+            pacote.addContainer("[Servidor] Jogador " + nome + " acaba de se conectar!\n");
             
             new ObjectOutputStream(this.server.getSocket().getOutputStream()).writeObject(pacote);
             
@@ -351,8 +351,7 @@ public class Cliente extends javax.swing.JFrame {
         //Opcao, Carro, Nome
         pacote.addContainer((String) this.cOpcoes.getSelectedItem());
         pacote.addContainer(this.carroNaTela);
-        pacote.addContainer(this.tNome.getText());
-        
+                
         trataPacote(pacote);
     }//GEN-LAST:event_bJogarActionPerformed
 
@@ -416,6 +415,11 @@ public class Cliente extends javax.swing.JFrame {
             
             if(isStart){
                 this.bJogar.setEnabled(true);
+                
+                Pacote pacoteChat = new Pacote(Escopo.CHAT);
+                String msgFirst = "[Servidor] O jogador " + this.tNome.getText() + " deve começar!\n";
+                pacoteChat.addContainer(msgFirst);
+                trataPacote(pacoteChat);
             }
             
             //printa carro na tela
@@ -430,6 +434,9 @@ public class Cliente extends javax.swing.JFrame {
             //Ganhou ou Perdeu?
             if(isWin){
                 this.bJogar.setEnabled(true);
+                
+                this.carros.remove(0);
+                this.carros.add(this.carroNaTela);
                 
                 ArrayList<Carro> carros = (ArrayList<Carro>) pacote.getContainer().get(1);
                 
@@ -446,16 +453,10 @@ public class Cliente extends javax.swing.JFrame {
                     System.exit(0);
                 }
                 
-                this.carroNaTela = this.carros.get(0);
-                renderizarCarroTela();
             }
             
-            if(!pacote.getContainer().isEmpty()){
-                
-                for (Object object : pacote.getContainer()) {
-                    carros.add((Carro) object);
-                }
-            }
+            this.carroNaTela = this.carros.get(0);
+            renderizarCarroTela();
         
         //pacote de jogada
         }else if(escopo == Escopo.JOGADA){
@@ -472,7 +473,7 @@ public class Cliente extends javax.swing.JFrame {
             
             Pacote pacoteJogada = new Pacote(Escopo.GET_JOGADA);
             pacoteJogada.addContainer(this.carroNaTela);
-            pacoteJogada.addContainer(this.tNome.getText());
+            
             
             try {
                 new ObjectOutputStream(server.getSocket().getOutputStream()).writeObject(pacoteJogada);

@@ -1,0 +1,41 @@
+[33mcommit 6026f60bff0e8a303e0a77064bc6573cb275b7a8[m
+Author: Augusto Jose <augusto.jm.amaral1@gmail.com>
+Date:   Fri May 15 16:43:33 2015 -0300
+
+    Correção bug Pacotes de Escopo Start no Servidor.
+
+[33mcommit 933baa41a1913ccac90faf5275091b783048e7c9[m
+Author: Augusto Jose <augusto.jm.amaral1@gmail.com>
+Date:   Fri May 15 15:30:09 2015 -0300
+
+    Tratamento de pacotes do cliente adicionado
+
+[33mcommit 02c9c65487940e4d43b7c1c2ee381fa80ad6c867[m
+Author: Augusto Jose <augusto.jm.amaral1@gmail.com>
+Date:   Thu May 14 20:48:48 2015 -0300
+
+    Sorteio de cartas / Sorteio do primeiro a jogar v1.21
+
+[33mcommit 2dd09f0383cd16301b0361f75f973f1f494ec98e[m
+Author: Augusto Jose <augusto.jm.amaral1@gmail.com>
+Date:   Thu May 14 14:27:35 2015 -0300
+
+    Mensagens de Conexao e Desconexao / Nick Jogadores - v1.01
+
+[33mcommit c2c75a412678997e8d060ca06c04f252d2488e53[m
+Author: Augusto Jose <augusto.jm.amaral1@gmail.com>
+Date:   Thu May 14 13:56:02 2015 -0300
+
+    Interface Grafica Completa - v1.0
+
+[33mcommit c9dbfaecab9297197ca4c40375464548c47ca087[m
+Author: Augusto Jose <augusto.jm.amaral1@gmail.com>
+Date:   Thu May 14 01:58:42 2015 -0300
+
+    Deletando arquivo git.txt
+
+[33mcommit 6d0ca44e44467c731059caa8a8588ef822e5113f[m
+Author: Augusto Jose <augusto.jm.amaral1@gmail.com>
+Date:   Thu May 14 01:38:22 2015 -0300
+
+    Adicionando arquivos no repositório
