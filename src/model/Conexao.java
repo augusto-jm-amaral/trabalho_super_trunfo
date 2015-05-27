@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package model;
 
 import java.io.Serializable;
@@ -10,7 +6,8 @@ import java.net.Socket;
 import java.util.Objects;
 
 /**
- *
+ *  Este objeto representa a conexão entre um servidor e o jogador e vice-versa
+ *  
  * @author augusto
  */
 public class Conexao implements Serializable{

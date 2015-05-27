@@ -1,5 +1,6 @@
 package service;
 
+import model.Jogada;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -8,15 +9,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Carro;
 import model.Conexao;
 import model.Escopo;
 import model.Pacote;
 
 /**
- *
+ *  Esta classe representa o servidor, tem de haver um minimo de 4 conexões para iniciar uma partida.
+ * 
  * @author augusto
  */
 public class Servidor {

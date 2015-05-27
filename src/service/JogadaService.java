@@ -1,14 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service;
 
+import model.Jogada;
 import java.util.ArrayList;
 
 /**
- *
+ *  Esta classe é responsavel pelas regras de negócio de uma jogada, determina um ganhador.
+ * 
  * @author augusto
  */
 public class JogadaService {
@@ -66,12 +63,5 @@ public class JogadaService {
         
         return valor;
     }
-    
-//Velocidade Max
-//Peso
-//Cilindrada
-//Preço
-//Torque
-//Potencia
     
 }

@@ -3,17 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service;
+package model;
 
 import java.util.Objects;
-import model.Carro;
-import model.Conexao;
 
 /**
  *
  * @author augusto
  */
-class Jogada {
+public class Jogada {
     
     private Conexao conexao;
     private Carro carro;

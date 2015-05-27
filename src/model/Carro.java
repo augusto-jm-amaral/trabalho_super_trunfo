@@ -4,7 +4,9 @@ package model;
 import java.io.Serializable;
 
 /**
- *
+ *  Este objeto representa as cartas do jogo.
+ * 
+ * 
  * @author Mário Pardo
  */
 

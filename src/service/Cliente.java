@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service;
 
 import java.io.IOException;
@@ -10,15 +5,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Carro;
 import model.Conexao;
 import model.Escopo;
 import model.Pacote;
 
 /**
- *
+ *  Este classe é o cliente do jogo utilizado para jogar.
  * @author augusto
  */
 public class Cliente extends javax.swing.JFrame {
@@ -69,6 +62,8 @@ public class Cliente extends javax.swing.JFrame {
         lTorque = new javax.swing.JLabel();
         lVelocidade = new javax.swing.JLabel();
         lPeso = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        lNumCartas = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -156,6 +151,10 @@ public class Cliente extends javax.swing.JFrame {
 
         lPeso.setText("Peso");
 
+        jLabel4.setText("Numero de cartas:");
+
+        lNumCartas.setText("Aguarde o inicio da partida");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -194,14 +193,18 @@ public class Cliente extends javax.swing.JFrame {
                             .addComponent(lPreco)
                             .addComponent(lCilindradas)
                             .addComponent(lPotencia)
-                            .addComponent(lTorque))))
+                            .addComponent(lTorque)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lNumCartas)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(tEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)))
+                        .addComponent(bEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -209,12 +212,6 @@ public class Cliente extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(tEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(bEnviar)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -229,7 +226,11 @@ public class Cliente extends javax.swing.JFrame {
                             .addComponent(tPorta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(9, 9, 9)
                         .addComponent(bConectar)
-                        .addGap(23, 23, 23)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(lNumCartas))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cOpcoes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(bJogar))
@@ -260,8 +261,14 @@ public class Cliente extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lTorque)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lPotencia)))))
-                .addContainerGap(23, Short.MAX_VALUE))
+                                .addComponent(lPotencia))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(tEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bEnviar))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -278,7 +285,10 @@ public class Cliente extends javax.swing.JFrame {
     private void tIpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tIpActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tIpActionPerformed
-
+    /**
+     * Botão responsavel por enviar msgs de texto ao servidor.
+     * @param evt 
+     */
     private void bEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bEnviarActionPerformed
         
         String text = this.tEnviar.getText();
@@ -304,7 +314,11 @@ public class Cliente extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_bEnviarActionPerformed
-
+    
+    /**
+     * Botão responsavel por conectar o cliente ao servidor.
+     * @param evt 
+     */
     private void bConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bConectarActionPerformed
         
         //Pega os ip porta e nome dos campos
@@ -326,22 +340,22 @@ public class Cliente extends javax.swing.JFrame {
         
         try {
             
+            //abre conexão socket com o server
             socket = new Socket(ip, Integer.parseInt(porta));
             this.server = new Conexao(socket);
             
+            //cria um listener para o servidor
             Thread thread = new Thread(new ServerListener(server));
             thread.start();
             
+            //envia um mensagem de chat avisando outros jogadores da conexão
             Pacote pacote = new Pacote(Escopo.CHAT);
             pacote.addContainer("[Servidor] Jogador " + nome + " acaba de se conectar!\n");
-            
             new ObjectOutputStream(this.server.getSocket().getOutputStream()).writeObject(pacote);
             
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        
-        
         
     }//GEN-LAST:event_bConectarActionPerformed
 
@@ -354,7 +368,10 @@ public class Cliente extends javax.swing.JFrame {
                 
         trataPacote(pacote);
     }//GEN-LAST:event_bJogarActionPerformed
-
+       
+    /**
+     * Faz a renderização do carro atual na tela.
+     */
     private void renderizarCarroTela() {
         
         this.lMarcaModelo.setText(carroNaTela.getMarca() + " " + carroNaTela.getModelo());
@@ -364,12 +381,20 @@ public class Cliente extends javax.swing.JFrame {
         this.lPreco.setText("" + carroNaTela.getPreco());
         this.lTorque.setText("" + carroNaTela.getTorque());
         this.lPotencia.setText("" + carroNaTela.getPotencia());
+        this.lNumCartas.setText("" + this.carros.size());
     }
     
+    /**
+     * Classe ouvinte do servidor.
+     */
     class ServerListener implements Runnable{
         
         Conexao cliente;
         
+        /**
+         * Contrutor recebe a conexão com o Server;
+         * @param cliente 
+         */
         public ServerListener(Conexao cliente) {
             this.cliente = cliente;
         }
@@ -377,18 +402,25 @@ public class Cliente extends javax.swing.JFrame {
         @Override
         public void run() {
             
+            //loop da thread
             while(true){
                 
                 try {
                     
+                    //aguarda um pacote do servidor
                     Pacote pacote = (Pacote) new ObjectInputStream(cliente.getSocket().getInputStream()).readObject();
+                    //envia o pacote para o servidor
                     trataPacote(pacote);
                     
+                    
                 } catch (IOException ex) {
-                                        
+                    
+                    //o servidor desconecte                    
                     throw  new RuntimeException("Jogador " + cliente.getId() + " desconectou");
                     
                 } catch (ClassNotFoundException ex) {
+                    
+                    //o objeto enviado não seja um pacote
                     ex.printStackTrace();
                 }
             }
@@ -401,53 +433,72 @@ public class Cliente extends javax.swing.JFrame {
         
         Escopo escopo = pacote.getEscopo();
         
-        //pacote de chat
+        //caso pacote de chat
         if(escopo == Escopo.CHAT){
             
+            //printa o texto no textArea
             this.tArea.append((String)pacote.getContainer().get(0));
             
-        //pacote de start
+        //pacote de start - pacote que inicia o jogo
         }else if(escopo == Escopo.START){
             
+            //pega o array de carros do container do pacote
             this.carros = (ArrayList<Carro>) pacote.getContainer().get(0);
             
+            //pega o boolean do container do pacote, este boolean vai determinar se ele deve começar a partida
             Boolean isStart = (Boolean) pacote.getContainer().get(1);
             
+            //caso ele seja o primeiro
             if(isStart){
+                
+                //habilita o botão jogar
                 this.bJogar.setEnabled(true);
                 
+                //envia um pacote chat para iformar que ele ira começar
                 Pacote pacoteChat = new Pacote(Escopo.CHAT);
                 String msgFirst = "[Servidor] O jogador " + this.tNome.getText() + " deve começar!\n";
                 pacoteChat.addContainer(msgFirst);
                 trataPacote(pacoteChat);
             }
             
-            //printa carro na tela
+            //pega o primeira carro ta lista
             carroNaTela = carros.get(0);
+        
+            //printa ele na tela
             renderizarCarroTela();
         
         //pacote de retorno da jogada
         }else if(escopo == Escopo.JOGADA_RETURN){
             
+            //pega o boolean que diz se ele ganhou ou não
             Boolean isWin = (Boolean) pacote.getContainer().get(0);
             
-            //Ganhou ou Perdeu?
+            //se ganhou
             if(isWin){
+                
+                //habilita o botão jogar
                 this.bJogar.setEnabled(true);
                 
+                //remove o primeiro carro
                 this.carros.remove(0);
-                this.carros.add(this.carroNaTela);
                 
+                //extrai os carros dos outros jogadores do pacote
                 ArrayList<Carro> carros = (ArrayList<Carro>) pacote.getContainer().get(1);
                 
+                //adiciona na lista do jogador
                 for (Carro carro : carros) {
                     this.carros.add(carro);
                 }
-                
+            //Caso perdeu    
             }else{
+                
+                //desabilita o botão jogar
                 this.bJogar.setEnabled(false);
+                
+                //remove o carro atual da lista de carros
                 this.carros.remove(this.carroNaTela);
                 
+                //caso o numero de carros chegue a zero o jogador perde
                 if(carros.size()==0){
                     //FIM DE JOGO A IMPLEMENTAR ESTE É TEMPORARIO
                     System.exit(0);
@@ -455,13 +506,18 @@ public class Cliente extends javax.swing.JFrame {
                 
             }
             
+            //pega o primeiro carrp da lista
             this.carroNaTela = this.carros.get(0);
+            
+            //renderiza na tela
             renderizarCarroTela();
         
-        //pacote de jogada
+        //caso pacote jogada ele o envia ao servidor
         }else if(escopo == Escopo.JOGADA){
             
             try {
+                
+                // envia o pacote ao servidor
                 new ObjectOutputStream(server.getSocket().getOutputStream()).writeObject(pacote);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -471,11 +527,15 @@ public class Cliente extends javax.swing.JFrame {
         //(Para os jogadores que não podem fazer a jogada na rodada, o servidor vai requisitar a carta)
         }else if(escopo == Escopo.GET_JOGADA){
             
+            //cria o pacote jogada
             Pacote pacoteJogada = new Pacote(Escopo.GET_JOGADA);
+            
+            //adiciona a carta ao container do pacote
             pacoteJogada.addContainer(this.carroNaTela);
             
             
             try {
+                //envia o pacote para o servidor
                 new ObjectOutputStream(server.getSocket().getOutputStream()).writeObject(pacoteJogada);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -531,12 +591,14 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lCilindradas;
     private javax.swing.JLabel lMarcaModelo;
+    private javax.swing.JLabel lNumCartas;
     private javax.swing.JLabel lPeso;
     private javax.swing.JLabel lPotencia;
     private javax.swing.JLabel lPreco;
