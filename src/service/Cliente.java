@@ -5,6 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import model.Carro;
 import model.Conexao;
 import model.Escopo;
@@ -458,7 +461,11 @@ public class Cliente extends javax.swing.JFrame {
                 Pacote pacoteChat = new Pacote(Escopo.CHAT);
                 String msgFirst = "[Servidor] O jogador " + this.tNome.getText() + " deve começar!\n";
                 pacoteChat.addContainer(msgFirst);
-                trataPacote(pacoteChat);
+                try {
+                    new ObjectOutputStream(server.getSocket().getOutputStream()).writeObject(pacoteChat);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
             
             //pega o primeira carro ta lista
@@ -499,8 +506,18 @@ public class Cliente extends javax.swing.JFrame {
                 this.carros.remove(this.carroNaTela);
                 
                 //caso o numero de carros chegue a zero o jogador perde
-                if(carros.size()==0){
-                    //FIM DE JOGO A IMPLEMENTAR ESTE É TEMPORARIO
+                if(carros.isEmpty()){
+                    Pacote pacoteMsgDerrota = new Pacote(Escopo.CHAT);
+                    pacoteMsgDerrota.addContainer("[Servidor] O jogador " + this.tNome.getText() + " perdeu!\n");
+                    
+                    try {
+                        new ObjectOutputStream(this.server.getSocket().getOutputStream()).writeObject(pacoteMsgDerrota);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    
+                    JOptionPane.showMessageDialog(this, "Suas cartas acabaram, você esta fora do jogo.");
+                    
                     System.exit(0);
                 }
                 
