@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Carro;
 import model.Conexao;
 import model.Escopo;
@@ -48,6 +50,7 @@ public class Servidor {
         
         System.out.println("[SERVIDOR] Subindo Servidor...");
         
+        //Inicia o servidor
         server= new ServerSocket(PORTA);
         
         System.out.println("[SERVIDOR] Servidor On...");
@@ -56,6 +59,7 @@ public class Servidor {
             
             System.out.println("[SERVIDOR] Aguardando Cliente...");
             
+            //Aguarda o jogador se conectar
             Socket socket = server.accept();
             
             System.out.println("[SERVIDOR] Cliente on...");
@@ -86,6 +90,7 @@ public class Servidor {
                 
                 Random rand = new Random();
                 
+                //numero representa o primeiro jogador a jogar
                 int first = rand.nextInt(conexoes.size());
                 
                 //para cada jogador
@@ -94,10 +99,13 @@ public class Servidor {
                     
                     System.out.println("[SERVIDOR] " + conexoes.get(i).getNome());
                     
+                    //instancia o pacote strat
                     Pacote pacoteStart = new Pacote(Escopo.START);
                     
+                    //instancia um arraylist de cartas do jogador
                     ArrayList<Carro> carrosStart = new ArrayList<>();
                     
+                    //para, enquanto o numero de cartas do jogador for menor e o numero pré-estabelecido
                     for(int j = 0; j < NUMERO_DE_CARTAS_POR_JOGADOR ; j++){
                         
                         //pega um carro aleatorio / add pacote / remove do array
@@ -139,15 +147,15 @@ public class Servidor {
                 
                 //Thread principal aguarda [TEMPORARIO]
                 while(true){
-                    
-                    try{
-                        Thread.sleep(10000);
-                    }catch(InterruptedException ex){
+                    try {
+                        Thread.sleep(Long.MAX_VALUE);
+                    } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
                 }
             }
             
+            //menssagem avisãndo quantos jogadores faltam.
             Pacote pacote = new Pacote(Escopo.CHAT);
             pacote.addContainer("[Servidor] Faltam " +(this.NUMERO_DE_JOGADORES_POR_JOGO-conexoes.size()) + " jogadores!\n");
             trataPacote(pacote,null);
@@ -163,16 +171,25 @@ public class Servidor {
         }
     }
     
+    /**
+     * Metodo responsavel por tratar as transações de pacotes cliente servidor.
+     * @param pacote
+     * @param conex 
+     */
     public synchronized void trataPacote(Pacote pacote, Conexao conex){
         
+        //pega o escopo do pacote
         Escopo escopo = pacote.getEscopo();
         
+        //se o pacote for de escopo chat
         if(escopo == Escopo.CHAT){
             
+            //para cada conexão
             for (Conexao conexao : conexoes) {
                 
                 try {
-                                                          
+                    
+                    //envio o pacote ao jogador da respequitiva conexão
                     new ObjectOutputStream(conexao.getSocket().getOutputStream()).writeObject(pacote);
                     
                 } catch (IOException ex) {
@@ -180,33 +197,51 @@ public class Servidor {
                     ex.printStackTrace();
                 }
             }
+            
+        //caso o pacote tenha escopo estart
         }else if(escopo == Escopo.START){
             
             try {
+                //apenas envia ao jogador
                 new ObjectOutputStream(conex.getSocket().getOutputStream()).writeObject(pacote);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            
+        
+        //caso seja um requisição de jogada
         }else if(escopo == Escopo.GET_JOGADA){
-            
-            System.out.println("GET_JOGADA " + conex.getNome());
             
             //tranforma o pacote em uma jogada
             Jogada jogada = new Jogada(conex, (Carro) pacote.getContainer().get(0));
             jogadas.add(jogada);
+            
+            System.out.println("Recebeu a req_jogada do jogador: " + conex.getNome());
             
             //espera todos jogarem
             if((jogadas.size()) == (conexoes.size())){
                 
                 //Class responsavel por determinar o ganhador
                 JogadaService jogadaService = new JogadaService();
-                //determina ganahdor
+                //determina ganhador
                 Jogada jogadaWinner = jogadaService.getWinner(jogadas, opcao);
+                
+                //msg ganhador
+                String msgJogada = "[Servidor] O Jogardor " + jogadaWinner.getConexao().getNome() + " ganhou a rodada!\n" +
+                                              "[Servidor] Atributo: " + opcao + "\n";
+                
+                //para cada jogada, add nome jogador e valor a string
+                for (Jogada jogadass : this.jogadas) {
+                    double valor = jogadaService.getValor(jogadass, opcao);
+                    String jogador = jogadass.getConexao().getNome();
+                    
+                    msgJogada += jogador + ": " + valor + "\n";
+                }
+                
                 
                 //envia msg dizendo quem ganhou
                 Pacote pacoteMsgWinner = new Pacote(Escopo.CHAT);
-                pacoteMsgWinner.addContainer("[Servidor] O Jogardor " + jogadaWinner.getConexao().getNome() + " ganhou a rodada!\n");
+                pacoteMsgWinner.addContainer(msgJogada);
+                //chamada recursiva
                 trataPacote(pacoteMsgWinner, null);
                 
                 //Array dos carros da jogada na qual o ganhador deve levar
@@ -249,16 +284,19 @@ public class Servidor {
                 
                 
             }
-            
+        
+        // caso seja um jogada, o jogador da vez jogou.
         }else if(escopo == Escopo.JOGADA){
             
-            System.out.println("JOGADA " + conex.getNome());
+            System.out.println("Recebeu a jogada do jogador: " + conex.getNome());
             
             //elimina jogadas
             jogadas = new ArrayList<>();
             
             //converte pacote em jogada
             Jogada jogada = new Jogada(conex,(Carro) pacote.getContainer().get(1));
+            
+            //opcao que o jogador escolheu
             opcao = (String) pacote.getContainer().get(0);
             
             //add jogada no array
@@ -277,6 +315,7 @@ public class Servidor {
                 if(!conex.equals(conexao)){
                     try {
                         
+                        //envia uma requisição de jogada
                         new ObjectOutputStream(conexao.getSocket().getOutputStream()).writeObject(new Pacote(Escopo.GET_JOGADA));
                         
                     } catch (IOException ex) {
