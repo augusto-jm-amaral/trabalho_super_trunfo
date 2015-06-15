@@ -326,6 +326,9 @@ public class Servidor {
         }
     }
     
+    /**
+     * Classe ouvindo do cliente.
+     */
     class ClientListener implements Runnable{
         
         Conexao cliente;
@@ -341,6 +344,7 @@ public class Servidor {
                 
                 try {
                     
+                    //aguarda receber um pacote do cliente
                     Pacote pacote = (Pacote) new ObjectInputStream(cliente.getSocket().getInputStream()).readObject();
                     
                     //pega nick do jogador
@@ -351,21 +355,38 @@ public class Servidor {
                         
                     }
                     
+                    //trata os pacotes dos clientes
                     trataPacote(pacote, this.cliente);
                     
                 } catch (IOException ex) {
                     
                     //Caso o jogador tenha se desconectado
-                    
                     String nome  = cliente.getNome();
+                    
+                    //remove a conexao do array de conexoes
                     conexoes.remove(this.cliente);
                     
+                    //Msg avisando que o jogador se desconectou
                     String msgOut = "[Servidor] O jogador " + nome + " desconectou-se\n";
                     Pacote pacote = new Pacote(Escopo.CHAT);
                     pacote.addContainer(msgOut);
                     
+                    //envia a msg
                     trataPacote(pacote, this.cliente);
                     
+                    //se houver apenas uma conexão
+                    if(conexoes.size()==1){
+                        
+                        //avisar o jogador de que ele é o vencedor
+                        String msgWin = "[Servidor] O jogador "+ conexoes.get(0).getNome() +" é o vencedor! \n";
+                        Pacote pacoteWin = new Pacote(Escopo.CHAT);
+                        pacoteWin.addContainer(msgWin);
+                        
+                        //envia a msg
+                        trataPacote(pacoteWin, conexoes.get(0));
+                    }
+                    
+                    //lança um runtimeException para quebrar a thread
                     throw  new RuntimeException("Jogador " + nome + " desconectou.");
                     
                 } catch (ClassNotFoundException ex) {

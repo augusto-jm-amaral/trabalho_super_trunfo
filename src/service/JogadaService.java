@@ -62,11 +62,11 @@ public class JogadaService {
                 break;
                 
             case "Torque":
-                    valor = jogada.getCarro().getPreco();
+                    valor = jogada.getCarro().getTorque();
                 break;
                 
             case "Potencia":
-                    valor = jogada.getCarro().getPreco();
+                    valor = jogada.getCarro().getPotencia();
                 break;
         }
         
