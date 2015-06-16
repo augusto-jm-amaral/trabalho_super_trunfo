@@ -17,8 +17,11 @@ import model.Pacote;
  */
 public class Cliente extends javax.swing.JFrame {
     
+    //Modelo conexão representa uma conexão com o servidor
     protected Conexao server;
+    //ArrayList de carros 
     protected ArrayList<Carro> carros;
+    //Carro que é exibido na tela
     protected Carro carroNaTela;
     
     /**
@@ -292,21 +295,29 @@ public class Cliente extends javax.swing.JFrame {
      */
     private void bEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bEnviarActionPerformed
         
+        //Pega a mensagem do usuario no campo
         String text = this.tEnviar.getText();
         
+        //limpa o campo
         this.tEnviar.setText("");
         
+        //adiciona um '\n' para que a menssagem pule uma linha ao ser exibida na interfacie dos demais
         String textC = text.concat("\n");
+        
+        //pega o nome do usuario
         String nome = this.tNome.getText();
         
+        //adiciona o nome a mensagem
         String textPEnviar = nome + " diz : " + textC;
         
+        //cria um pacote com escopo chat 
         Pacote pacote = new Pacote(Escopo.CHAT);
+        //add a msg 
         pacote.addContainer(textPEnviar);
         
         try {
             
-            
+            //envia a msg ao servidor
             new ObjectOutputStream(this.server.getSocket().getOutputStream()).writeObject(pacote);
             
         } catch (IOException ex) {
@@ -361,12 +372,17 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_bConectarActionPerformed
 
     private void bJogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bJogarActionPerformed
+        
+        
+        //cria um pacote com escopo jogada
         Pacote pacote = new Pacote(Escopo.JOGADA);
         
-        //Opcao, Carro, Nome
+        //adiciona a opção selecionada do usuario
         pacote.addContainer((String) this.cOpcoes.getSelectedItem());
+        //adiciona o carro do usuario
         pacote.addContainer(this.carroNaTela);
-                
+        
+        //chama o método tratar pacote
         trataPacote(pacote);
     }//GEN-LAST:event_bJogarActionPerformed
        
@@ -375,6 +391,7 @@ public class Cliente extends javax.swing.JFrame {
      */
     private void renderizarCarroTela() {
         
+        //pega os valores do carro corrente e adiciona na tela
         this.lMarcaModelo.setText(carroNaTela.getMarca() + " " + carroNaTela.getModelo());
         this.lVelocidade.setText("" + carroNaTela.getVelocidadeMaxima());
         this.lPeso.setText("" + carroNaTela.getPeso());
@@ -432,6 +449,7 @@ public class Cliente extends javax.swing.JFrame {
     //Trata os pacotes
     public synchronized void trataPacote(Pacote pacote){
         
+        //pega o escopo do pacote recebido
         Escopo escopo = pacote.getEscopo();
         
         //caso pacote de chat
@@ -505,17 +523,22 @@ public class Cliente extends javax.swing.JFrame {
                 
                 //caso o numero de carros chegue a zero o jogador perde
                 if(carros.isEmpty()){
+                    
+                    //avisa os demais jogadores da derrota
                     Pacote pacoteMsgDerrota = new Pacote(Escopo.CHAT);
                     pacoteMsgDerrota.addContainer("[Servidor] O jogador " + this.tNome.getText() + " perdeu!\n");
                     
                     try {
+                        //envia ao servidor
                         new ObjectOutputStream(this.server.getSocket().getOutputStream()).writeObject(pacoteMsgDerrota);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
                     
+                    //lança um jOptionPane na tela para informar a derrota ao usuario
                     JOptionPane.showMessageDialog(this, "Suas cartas acabaram, você esta fora do jogo.");
                     
+                    //fecha o jogo
                     System.exit(0);
                 }
                 
